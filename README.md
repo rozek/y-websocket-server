@@ -136,6 +136,17 @@ without any intervention.
 > certificates. If lost, Caddy must request new ones — Let's Encrypt enforces
 > strict [rate limits](https://letsencrypt.org/docs/rate-limits/).
 
+For a very quick and dirty test, you may run
+
+```bash
+curl -i --no-buffer \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+  -H "Sec-WebSocket-Version: 13" \
+  https://$DOMAIN/dummy-roomname
+```
+
 ### Stop
 
 ```sh
