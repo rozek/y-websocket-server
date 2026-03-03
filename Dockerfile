@@ -1,10 +1,9 @@
-FROM node:12-alpine
+FROM node:22-alpine
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-WORKDIR /home/node/app
-COPY package*.json ./
-USER node
-RUN npm install
-COPY --chown=node:node . .
+RUN mkdir -p /app \
+ && cd /app \
+ && npm i @y/websocket-server
+
 EXPOSE 1234
-CMD [ "npm", "start" ]
+
+CMD ["/bin/sh", "-c", "cd /app && HOST=0.0.0.0 PORT=1234 npx y-websocket"]

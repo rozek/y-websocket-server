@@ -1,0 +1,28 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"       # HTTP (für Let's-Encrypt-Challenge und Redirect auf HTTPS)
+      - "443:443"     # HTTPS / WSS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data       # Zertifikate – dieses Volume NICHT löschen!
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+    depends_on:
+      - y-websocket
+
+  y-websocket:
+    build: .
+    restart: always
+    expose:
+      - "1234"        # nur intern erreichbar, kein direkter Zugriff von außen
+    environment:
+      - HOST=0.0.0.0
+      - PORT=1234
+
+volumes:
+  caddy_data:    # persistente Zertifikatsspeicherung (Let's Encrypt)
+  caddy_config:

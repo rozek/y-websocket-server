@@ -1,0 +1,3 @@
+{$DOMAIN} {
+    reverse_proxy y-websocket:1234
+}
