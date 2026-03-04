@@ -62,7 +62,8 @@
     ]
   },
   "overrides": {
-    "yjs": "^14.0.0-7"
+    "yjs": "^14.0.0-7",
+    "lib0": "^0.2.102"
   },
   "dependencies": {
     "@y/protocols": "^1.0.6-1",
