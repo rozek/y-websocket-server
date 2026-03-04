@@ -15,20 +15,20 @@ this server.
 
 ## Quick Start
 
-### Install dependencies
+### Clone and install
 
 ```sh
-npm i @y/websocket-server
+git clone https://github.com/rozek/y-websocket-server
+cd y-websocket-server
+npm install
 ```
 
 ### Start a y-websocket server
 
 This repository implements a basic server that you can adopt to your specific use-case. [(source code)](./src/)
 
-Start a y-websocket server:
-
 ```sh
-HOST=localhost PORT=1234 npx y-websocket
+HOST=localhost PORT=1234 node ./src/server.js
 ```
 
 ### Client Code:
@@ -50,10 +50,10 @@ wsProvider.on('status', event => {
 Start a y-websocket server:
 
 ```sh
-HOST=localhost PORT=1234 npx y-websocket
+HOST=localhost PORT=1234 node ./src/server.js
 ```
 
-Since npm symlinks the `y-websocket` executable from your local `./node_modules/.bin` folder, you can simply run npx. The `PORT` environment variable already defaults to 1234, and `HOST` defaults to `localhost`.
+`PORT` defaults to `1234` and `HOST` defaults to `localhost`, so for local development a plain `node ./src/server.js` is sufficient.
 
 ### Websocket Server with Persistence
 
@@ -62,7 +62,7 @@ Persist document updates in a LevelDB database.
 See [LevelDB Persistence](https://github.com/yjs/y-leveldb) for more info.
 
 ```sh
-HOST=localhost PORT=1234 YPERSISTENCE=./dbDir npx y-websocket
+HOST=localhost PORT=1234 YPERSISTENCE=./dbDir node ./src/server.js
 ```
 
 ### Websocket Server with Token Authentication
@@ -81,13 +81,13 @@ Two configuration options are supported:
 **Option A – inline token list** (environment variable, comma-separated):
 
 ```sh
-AUTH_TOKENS=secret-token-1,secret-token-2 npx y-websocket
+AUTH_TOKENS=secret-token-1,secret-token-2 node ./src/server.js
 ```
 
 **Option B – token file** (one token per line; `#` comments and blank lines are ignored):
 
 ```sh
-TOKENS_FILE=/etc/y-websocket/tokens npx y-websocket
+TOKENS_FILE=/etc/y-websocket/tokens node ./src/server.js
 ```
 
 Example token file:
@@ -138,7 +138,7 @@ Can take the following ENV variables:
 * `CALLBACK_OBJECTS` : JSON of shared objects to get data (`'{"SHARED_OBJECT_NAME":"SHARED_OBJECT_TYPE}'`)
 
 ```sh
-CALLBACK_URL=http://localhost:3000/ CALLBACK_OBJECTS='{"prosemirror":"XmlFragment"}' npm start
+CALLBACK_URL=http://localhost:3000/ CALLBACK_OBJECTS='{"prosemirror":"XmlFragment"}' node ./src/server.js
 ```
 This sends a debounced callback to `localhost:3000` 2 seconds after receiving an update (default `DEBOUNCE_WAIT`) with the data of an XmlFragment named `"prosemirror"` in the body.
 
