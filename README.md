@@ -8,7 +8,10 @@ handles authentication and authorization. Websockets also send header
 information and cookies, so you can use existing authentication mechanisms with
 this server.
 
-> this repository is basically a copy of the [original](https://github.com/yjs/y-websocket-server), but with templates and instructions for how to setup a Docker container for a TLS-enabled WebSocket server behind [Caddy](https://github.com/caddyserver/caddy) as a reverse proxy, which automatically handles automatic certificate renewal through [Lets Encrypt](https://letsencrypt.org/).
+> This repository is a copy of the [original](https://github.com/yjs/y-websocket-server) with two additions:
+>
+> 1. **Caddy reverse proxy with automatic TLS** – templates and instructions for running the server in Docker behind [Caddy](https://github.com/caddyserver/caddy), which handles certificate renewal via [Let's Encrypt](https://letsencrypt.org/) automatically.
+> 2. **Token authentication** – the server can be configured with a list of accepted tokens (via environment variable or file); clients must present a valid token as a URL query parameter (`?token=…`) or in an `Authorization: Bearer …` header.
 
 ## Quick Start
 
@@ -61,6 +64,66 @@ See [LevelDB Persistence](https://github.com/yjs/y-leveldb) for more info.
 ```sh
 HOST=localhost PORT=1234 YPERSISTENCE=./dbDir npx y-websocket
 ```
+
+### Websocket Server with Token Authentication
+
+Restrict access to clients that present a valid token.
+
+Two ways to pass the token to the server are supported (in order of precedence):
+
+1. **`Authorization` header** – `Authorization: Bearer <token>`
+   (works with Node.js clients, `wscat`, and other native WebSocket clients)
+2. **URL query parameter** – `?token=<token>`
+   (works with all clients, including browser `WebSocket`)
+
+Two configuration options are supported:
+
+**Option A – inline token list** (environment variable, comma-separated):
+
+```sh
+AUTH_TOKENS=secret-token-1,secret-token-2 npx y-websocket
+```
+
+**Option B – token file** (one token per line; `#` comments and blank lines are ignored):
+
+```sh
+TOKENS_FILE=/etc/y-websocket/tokens npx y-websocket
+```
+
+Example token file:
+
+```
+# production tokens
+secret-token-1
+secret-token-2
+```
+
+If neither `AUTH_TOKENS` nor `TOKENS_FILE` is set, the server starts without
+authentication and prints a warning.
+
+**Client code – via query parameter:**
+
+```js
+const wsProvider = new WebsocketProvider(
+  'ws://localhost:1234', 'my-roomname', doc,
+  { params: { token: 'secret-token-1' } }
+)
+```
+
+**Native clients (e.g. `wscat`) – via Authorization header:**
+
+```sh
+wscat -H "Authorization: Bearer secret-token-1" \
+      -c "ws://localhost:1234/my-roomname"
+```
+
+> **Note:** The `WebsocketProvider` from `y-websocket` does not support sending
+> custom HTTP headers directly. Use the `params` option (URL query parameter)
+> for all Yjs clients. The `Authorization` header is only usable from native
+> WebSocket clients outside of Yjs.
+
+> Use tokens of at least 32 random characters, e.g. generated with
+> `openssl rand -hex 32`.
 
 ### Websocket Server with HTTP callback
 

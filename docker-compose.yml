@@ -22,6 +22,15 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=1234
+      # Token authentication – choose one of the two options:
+      #
+      # Option A: inline comma-separated token list
+      # - AUTH_TOKENS=${AUTH_TOKENS}
+      #
+      # Option B: read tokens from a mounted file (one token per line)
+      # - TOKENS_FILE=/run/secrets/tokens
+    # volumes:                               # only needed for Option B
+    #   - ./tokens.txt:/run/secrets/tokens:ro
 
 volumes:
   caddy_data:                   # persistent certificate storage (Let's Encrypt)
